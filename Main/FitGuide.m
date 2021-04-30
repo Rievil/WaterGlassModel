@@ -119,6 +119,10 @@ classdef FitGuide < handle
             obj.LimX=[];
             obj.LimY=[];
             obj.LimZ=[];
+            
+            for i=1:numel(obj.MainLine)
+                delete(obj.MainLine{i});
+            end
             obj.MainLine=[];
             
             hold( obj.MainAx, 'on' );
