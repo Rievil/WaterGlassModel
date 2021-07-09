@@ -50,9 +50,36 @@ classdef FitGuide < handle
             obj.CurrType=type;
         end
         
+        function R=GetData(obj)
+            
+            R=obj.ProcessInputRawData;
+            CreateFitObj(obj);
+        end
+        
         function AssAxis(obj,MainAx,SupAx)
             obj.MainAx=MainAx;
             obj.SupAx=SupAx;
+        end
+        
+        function [Z,gof]=GetZ(obj,x,y,t,type)
+            obj.GX=x;
+            obj.GY=y;
+            obj.GT=t;
+            
+            T=obj.FitTable(obj.FitTable.Type==type,:);
+            temp=[];
+            zval=[];
+            
+            for i=1:size(T,1)
+                zval=[zval; T.Fit{i}(x,y)];
+                temp=[temp; T.Temp(i)];
+            end
+            
+            xt=temp;
+            yt=zval;
+
+            [fitresult,gof]=FitGuide.FitLine(xt,yt);
+            Z=fitresult(t);
         end
         
         function InterDraw(obj,x,y,t)
@@ -170,7 +197,10 @@ classdef FitGuide < handle
     
     methods (Access=private)
         function [R]=ProcessInputRawData(obj)
-            filename=obj.Filename;
+%             file=which(class(obj));
+            filename=[char(replace(which(class(obj)),[class(obj) '.m'],'')), obj.Filename];
+            
+%             filename=obj.Filename;
             
             sheets={'NaOH-NaVS_h_15C','NaOH-NaVS_h_20C','NaOH-NaVS_h_25C','NaOH-NaVS_h_30C','KOH-KVS_h_15C','KOH-KVS_h_20C',...
                 'KOH-KVS_h_25C','KOH-KVS_h_30C','KOH-KVS_v_15C','KOH-KVS_v_20C','KOH-KVS_v_25C','KOH-KVS_v_30C'};
