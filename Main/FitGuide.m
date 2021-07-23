@@ -4,7 +4,7 @@ classdef FitGuide < handle
     properties
         Filename;
         RawInputData;
-        FitTable;
+        FitTable;w
         CurrType;
     end
     
@@ -163,7 +163,7 @@ classdef FitGuide < handle
             for i=1:size(T,1)
                 lx=linspace(min(T.Source{i,1}.x),max(T.Source{i,1}.x),10);
                 ly=linspace(min(T.Source{i,1}.y),max(T.Source{i,1}.y),10);
-
+%                 scatter3(obj.MainAx,T.Source{i,1}.x,T.Source{i,1}.y,T.Source{i,1}.z,'marker','.');
                 [xx,yy] = meshgrid(lx,ly);
 
                 c=clrs(i,:);
@@ -172,6 +172,7 @@ classdef FitGuide < handle
                 plainname=sprintf('Mixture %s, T=%d',T.Source{i,1}.Mixture(1),T.Temp(i));
                 obj.MainPlain{i}=surf(obj.MainAx,xx,yy,zz,'FaceAlpha',0.8,'DisplayName',plainname,'FaceColor',c);
                 Limits(obj,xx,yy,zz);
+                
             end
             legend(obj.MainAx);
             xlabel(obj.MainAx,'Na^{+} (mol/l)');
