@@ -242,4 +242,6 @@ Ts=sortrows(R,'x');
 Ts=Ts(Ts.ZType=="v" & Ts.T==15,:);
 
 plot(Ts.x,Ts.y);
-
+%%
+sT=OutT(OutT.t==15,:);
+scatter(sT.zv,sT.zd,[],sT.x,'filled');
