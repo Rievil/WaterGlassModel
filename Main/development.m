@@ -20,29 +20,103 @@ TF=[T1; T2; T3; T4];
 % unqT=unique(TF.Teplota);
 % unqL=unique(TF.legend);
 
-TFF=FoldTable(TF,[5,6,7],[1,2,3,8],'mean');
+TFF=FoldTable(TF,[5,6,7],[1,2,3,8],'none');
 %%
 
 TU=TFF(1:7,1:7);
 TL=TFF(8:14,6);
-TL.Properties.VariableNames={'z2'};
+TL.Properties.VariableNames={'Viscosity'};
 TT=[TU, TL];
-TT.Properties.VariableNames={};
+TT.Properties.VariableNames(6)={'Density'};
+TT(:,3)=[];
 %%
-row=13;
+row=5;
+axtype='x';
 
-x=TFF.z{1};
-y=TFF.z{8};
-z=TFF.x{8};
-t=TFF.Teplota{8};
+varname=[axtype 'label'];
 
-xla=TFF.zlabel(1);
-yla=TFF.zlabel(8);
-zla=TFF.xlabel(8);
+x=TT.Density{row};
+y=TT.Viscosity{row};
+z=TT.(axtype){row};
+t=TT.Teplota{row};
 
-scatter3(x,y,z,60,t,'filled');
-xlabel(xla);
-ylabel(yla);
-zlabel(zla);
+Ti=table(x,y,z,t,'VariableNames',{'Density','Viscosity',char(TT.(varname)(row)),'Temperature'});
 
+TiTemp=table2array(Ti(Ti.Temperature==25,:));
+
+xt=TiTemp(:,1);
+yt=TiTemp(:,2);
+zt=TiTemp(:,3);
+
+[fitresult, gof] = createFit(xt, yt, zt);
+title(sprintf("sse: %0.4e rsquare: %0.2f",gof.sse,gof.rsquare));
+
+xlabel('Density');
+ylabel('Viscosity');
+zlabel(TT.(varname)(row));
+% xla='Density';
+% yla='Viscosity';
+% zla=TT.xlabel(1);
+% 
+% scatter3(x,y,z,60,t,'filled');
+% xlabel(xla);
+% ylabel(yla);
+% zlabel(zla);
+% 
+set(gca,'YScale','log');
+%%
+%%
+row=3;
+axtype='y';
+
+varname=[axtype 'label'];
+
+x=TT.Density{row};
+y=TT.x{row};
+z=TT.(axtype){row};
+t=TT.Teplota{row};
+
+Ti=table(x,y,z,t,'VariableNames',{'Density','Viscosity',char(TT.(varname)(row)),'Temperature'});
+
+TiTemp=table2array(Ti(Ti.Temperature==15,:));
+
+xt=TiTemp(:,1);
+yt=TiTemp(:,2);
+zt=TiTemp(:,3);
+
+[fitresult, gof] = createFit(xt, yt, zt);
+title(sprintf("sse: %0.4e rsquare: %0.2f",gof.sse,gof.rsquare));
+
+xlabel('Density');
+ylabel('Viscosity');
+zlabel(TT.(varname)(row));
+% xla='Density';
+% yla='Viscosity';
+% zla=TT.xlabel(1);
+% 
+% scatter3(x,y,z,60,t,'filled');
+% xlabel(xla);
+% ylabel(yla);
+% zlabel(zla);
+% 
+set(gca,'YScale','log');
+%%
+
+Ts=T(T.Teplota==15,:);
+
+Ts.xlabel=string(Ts.xlabel);
+Ts.ylabel=string(Ts.ylabel);
+Ts.zlabel=string(Ts.zlabel);
+
+Tsi=Ts(Ts.xlabel=="Na+(mol/l)",:);
+
+TsD=Tsi(Tsi.zlabel=='Density',:);
+TsV=Tsi(Tsi.zlabel=='Viscosity',:);
+
+xt=TsD.z;
+yt=TsV.z;
+zt=TsV.x;
+
+[fitresult, gof] = createFit(xt, yt, zt);
+title(sprintf("sse: %0.4e rsquare: %0.2f",gof.sse,gof.rsquare));
 set(gca,'YScale','log');
