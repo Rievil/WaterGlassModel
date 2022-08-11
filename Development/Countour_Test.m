@@ -1,5 +1,6 @@
-load('C:\Users\Richard\OneDrive - Vysoké učení technické v Brně\Měření\2021\WaterGlass\MatriceDensityViskozity.mat');
-%%
+
+load('MatriceDensityViskozity.mat');
+%
 trange=[15,20.526315789473685,25.263157894736842,30];
 %%
 fig=figure('position',[0 80 900 800]);
@@ -50,6 +51,7 @@ for tr=1:numel(trange)
     ylim([1 2]);
     c=colorbar;
     c.Label.String=sprintf('SiO_{2} at %d °C (mol/l)',round(temp,0));
+%     title(sprintf("Temperature: %d °C",round(temp,0)));
     %
 %     fig=figure;
 %     ax=gca;
@@ -72,7 +74,7 @@ end
 xlabel(tl,'Viscozity (Pa\cdots)');
 ylabel(tl,'Density (g/cm^{3})');
 set(fig,'renderer','painters');
-print(fig,'Contour','-r300','-dpng');
+% print(fig,'Contour','-r300','-dpng');
 %%
 fig=figure('position',[0 80 900 800]);
 tl=tiledlayout(numel(trange),2);
