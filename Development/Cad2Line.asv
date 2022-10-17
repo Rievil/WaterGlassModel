@@ -89,38 +89,31 @@ classdef Cad2Line < handle
                 lh=[];
                 for i=1:numel(obj.ShapeList)
                     sh=obj.ShapeList{i};
-                    h=plot(sh.Polygon,'DisplayName',string(i));
-
-%                     [xs,ys] = centroid(sh.Polygon);
+                    h=plot(sh.Polygon);
                     h.LineStyle='-';
                     h.EdgeColor ='k';
                     lh(end+1)=h;
-%                     text(xs,ys,string(i));
                     if sh.PCount>0
                         x=sh.Points.x;
                         y=sh.Points.y;
                         color=h.FaceColor*0.9;
-                        scatter(x,y,20,'o','filled','MarkerFaceColor',color,'MarkerEdgeColor','none','HandleVisibility','off');
+                        scatter(x,y,20,'o','filled','MarkerFaceColor',color,'MarkerEdgeColor','none');
                     end
                     %                     h.FaceColor ='#4DBEEE';
                 end
-                lgd=legend;
-                lgd.Title.String='Phazes';
+%                 legend(lh);
                 set(get(ax,'YAxis'),'Color','none');
                 set(get(ax,'XAxis'),'Color','none');
                 xlim([-0.2,1.2]);
                 ylim([-0.2,obj.Height+0.2]);
 
-                text(0.5,obj.Height+0.1,sprintf("H_{2}O"),'HorizontalAlignment','center',...
-                    'HandleVisibility','off');
-                text(-0.1,-0.1,sprintf("Na_{2}O"),'HorizontalAlignment','center',...
-                    'HandleVisibility','off');
-                text(1.1,-0.1,sprintf("SiO_{2}"),'HorizontalAlignment','center',...
-                    'HandleVisibility','off');
+                text(0.5,obj.Height+0.1,sprintf("H_{2}O"),'HorizontalAlignment','center');
+                text(-0.1,-0.1,sprintf("Na_{2}O"),'HorizontalAlignment','center');
+                text(1.1,-0.1,sprintf("SiO_{2}"),'HorizontalAlignment','center');
 
                 x=[0,0.5,1,0];
                 y=[0,obj.Height,0,0];
-                plot(x,y,'-k','LineWidth',1.2,'HandleVisibility','off');
+                plot(x,y,'-k','LineWidth',1.2);
 
                 tickLength=0.02;
                 yb=cos(deg2rad(60))*tickLength;
@@ -144,8 +137,8 @@ classdef Cad2Line < handle
                         end
                         xii=[xi(j),xi(j)+dx];
                         yii=[yi(j),yi(j)+dy];
-                        plot(xii,yii,'-k','HandleVisibility','off');
-                        text(xii(2)+dx,yii(2)+dy,string(11-j),'HorizontalAlignment','center','HandleVisibility','off');
+                        plot(xii,yii,'-k');
+                        text(xii(2),yii(2),string(11-j),)
                     end
                 end
             end

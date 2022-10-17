@@ -1,0 +1,75 @@
+%% Reading function
+T=readtable("Ternear.csv",'VariableNamingRule','preserve');
+T=T(:,["End X","End Y","Start X","Start Y","Layer"]);
+
+obj=Cad2Line(T,"Layer");
+%% Ploting function
+fig=plot(obj);
+
+%% Ternar 2 cartesian
+a=0.7;
+b=0.2;
+c=1-a-b;
+
+x=b+c/2;
+y=tan(deg2rad(60))*c/2;
+
+scatter(x,y,'o','filled');
+%% Cartesian 2 ternar
+ci=y/tan(deg2rad(60))*2;
+bi=x-y/tan(deg2rad(60));
+ai=1-c-b;
+%%
+data=readtable("data pro Vlastika_Šablona_2022-10-07.xlsx",'VariableNamingRule','preserve');
+%
+data.('x4Label')=string(data.('x4Label'));
+data.('y4Label')=string(data.('y4Label'));
+T=data(data.('x4Label')=='Na+ (mol/kg)' & data.('y4Label')=='Si4+ (mol/kg)',["Na2O_proc","SiO2_proc","H2O_proc","hodnota veličiny","veličina","Teplota","legend_proc"]);
+T.("Na2O_proc")=T.("Na2O_proc")/100;
+T.("SiO2_proc")=T.("SiO2_proc")/100;
+T.("H2O_proc")=T.("H2O_proc")/100;
+
+%
+
+a=T.("Na2O_proc");
+b=T.("SiO2_proc");
+c=T.("H2O_proc");
+
+x=b+c/2;
+y=tan(deg2rad(60))*c/2;
+%
+obj.AddPoints(x,y);
+%%
+
+fig=plot(obj);
+%%
+SaveMyFig(fig,'Trenar_PointsDistribution');
+% scatter(x,y,30,'o','filled');
+%% Testing
+figure;
+hold on;
+a=T.("Na2O_proc");
+b=T.("SiO2_proc");
+c=T.("H2O_proc");
+
+z=T.("hodnota veličiny");
+
+x=b+c/2;
+y=tan(deg2rad(60))*c/2;
+
+
+
+xg=linspace(0,1,25);
+yg=linspace(0,tan(deg2rad(60))*0.5,25);
+
+
+[X,Y]=meshgrid(xg,yg);
+Z = griddata(x,y,a,X,Y);
+
+[c,h]=contour(X,Y,Z);
+
+xt=[0,0.5,1,0];
+yt=[0,tan(deg2rad(60))*0.5,0,0];
+plot(xt,yt);
+%%
+surf(xg,yg,Z)

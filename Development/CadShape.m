@@ -4,6 +4,9 @@ classdef CadShape <handle
         Cordinates table;
         SZ (1,2) double;
         Polygon;
+        Points table;
+        PCount=0;
+        Closed=true;
     end
     
     methods
@@ -48,7 +51,9 @@ classdef CadShape <handle
                 end
                 [idx,side]=FindFriend(obj,Ti);
             end
-            obj.Cordinates=[obj.Cordinates; obj.Cordinates(1,:)];
+            if obj.Closed
+                obj.Cordinates=[obj.Cordinates; obj.Cordinates(1,:)];
+            end
         end
 
         function [idx,side]=FindFriend(obj,Ti)
@@ -77,5 +82,18 @@ classdef CadShape <handle
             idx=Tt.Index(row);
 
         end
+
+        function AddPoints(obj,x,y)
+            obj.Points=[];
+            obj.PCount=0;
+            in = inpolygon(x,y,obj.Cordinates.x,obj.Cordinates.y);
+            if sum(in)>0
+                P=table(x(in),y(in),'VariableNames',{'x','y'});
+                obj.Points=P;
+                obj.PCount=size(obj.Points,1);
+            end
+        end
+
+        
     end
 end
