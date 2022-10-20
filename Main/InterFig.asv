@@ -1,0 +1,53 @@
+classdef InterFig < handle
+    properties
+        WGGuide;
+        UIFig;
+        TabPanel;
+        WGTabList;
+        Count=0;
+    end
+
+    methods
+        function obj=InterFig(~)
+            obj.WGGuide=WGGuide("data pro Vlastika_Šablona_2022-10-07.xlsx");
+            DrawGUI(obj);
+        end
+
+        function DrawGUI(obj)
+            fig=uifigure;
+            obj.UIFig=fig;
+
+            g = uigridlayout(fig);
+            g.RowHeight = {25,'1x'};
+            g.ColumnWidth = {125,125,'1x'};
+            
+            but1=uibutton(g,'Text','New interpretation','ButtonPushedFcn',@obj.MNew);
+            but1.Layout.Row=1;
+            but1.Layout.Column=1;
+
+            but2=uibutton(g,'Text','Close interpretation');
+            but2.Layout.Row=1;
+            but2.Layout.Column=2;
+
+            uip=uipanel(g,'Title','Options');
+            uip.Layout.Row=2;
+            uip.Layout.Column=[1 2];
+            
+
+            tabgp = uitabgroup(g,'Position',[.05 .05 .3 .8]);
+            tabgp.Layout.Row=[1 2];
+            tabgp.Layout.Column=3;
+            obj.TabPanel=tabgp;
+        end
+    end
+
+    methods (Access=private)
+        function MNew(obj,src,evnt)
+            ntab = uitab(obj.TabPanel,'Title','Options');
+            obj1=WGTab(obj,ntab);
+            obj.WGTabList(end+1)=obj1;
+            obj.Count=numel(obj.WGTabList);
+        end
+    end
+
+end

@@ -261,7 +261,7 @@ classdef FitGuide < handle
                 'standard deviation','data set',...
                 'Temperature','Source mixture',...
                 'Type of z variable'};
-
+            
             R.Properties.VariableUnits={'mol/l','mol/l','','kg/m^{3}','Pa\cdots','-','','°C','',''};
             
             obj.RawInputData=R;
@@ -353,15 +353,6 @@ classdef FitGuide < handle
 
             % Fit model to data.
             [fitresult, gof] = fit( [xData, yData], zData, ft, opts );
-        end
-
-        function [fitresult,gof]=FitProcessedData2(x,y,z)
-            [xData, yData, zData] = prepareSurfaceData( x, y, z );
-
-            % Set up fittype and options.
-            ft = 'thinplateinterp';
-            [fitresult, gof] = fit( [xData, yData], zData, ft, 'Normalize', 'on' );
-
         end
         
         function [fitresult,gof]=FitLine(x,y)

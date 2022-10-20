@@ -1,8 +1,6 @@
 %% Načíst data
 data=readtable("data pro Vlastika_Šablona_2022-10-07.xlsx",'VariableNamingRule','preserve');
-%%
-% obj=WGGuide("data pro Vlastika_Šablona_2022-10-07.xlsx");
-obj=InterFig;
+
 %% Filtrovat pouze VUT
 
 T=data(data.('Laboratoř')=="VUT",:);
@@ -22,7 +20,7 @@ TF(idx,:)=[];
 %%
 figure;
 hold on;
-vy=4;
+vy=1;
 Ti=TF.FilteredTable{4};
 if vy>1
     xnam=sprintf('x%d',vy);
@@ -33,37 +31,16 @@ else
     xnam='x';
     ynam='y';
     znam='z';
-    stname='std';
+    stname=sprintf('std%d',vy);
 end
 
 x=Ti.(xnam);
 y=Ti.(ynam);
 z=Ti.(znam);
-s=Ti.(stname);
 
 t=Ti.Teplota;
-Tm=table(x,y,z,s,t);
-unqt=unique(Tm.t);
-col=lines(numel(unqt));
-for i=1:numel(unqt)
-    Tmi=Tm(Tm.t==unqt(i),:);
-    [fitresult,gof]=FitGuide.FitProcessedData2(Tmi.x,Tmi.y,Tmi.z);
-    
-    x1=Tmi.x;
-    y1=Tmi.y;
-    z1=Tmi.z;
-
-    lx=linspace(min(Tmi.x),max(Tmi.x),10);
-    ly=linspace(min(Tmi.y),max(Tmi.y),10);
-    scatter3(Tmi.x,Tmi.y,Tmi.z,60,'marker','o','HandleVisibility','off','MarkerFaceColor',col(i,:),'MarkerEdgeColor','none');
-    [xx,yy] = meshgrid(lx,ly);
-    zz=fitresult(xx,yy);
-    surf(xx,yy,zz,'FaceAlpha',0.8,'DisplayName',sprintf("R2:%0.2f T:%d",gof.rsquare,unqt(i)),'FaceColor',col(i,:));
-end
-legend;
+scatter3(x,y,z,30,t,'filled');
 set(gca,'ZScale','log');
-view(30,30);
-
 %%
 Tii=Ti(Ti.Teplota==20,:);
 %%
