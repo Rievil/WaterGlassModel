@@ -13,6 +13,13 @@ classdef WGGuide < handle
         function obj=WGGuide(file)
             obj.DataFile=file;
             obj.Data=readtable(obj.DataFile,'VariableNamingRule','preserve');
+
+            idx=1:1:size(obj.Data,1);
+            idx=idx';
+            ignore=logical(zeros(size(obj.Data,1),1));
+            obj.Data.ID=idx;
+            obj.Data.Ignore=ignore;
+
             MakeSelection(obj);
             obj.Data.('Laboratoř')=string(obj.Data.('Laboratoř'));
             obj.Source=unique(obj.Data.('Laboratoř'));
@@ -28,7 +35,7 @@ classdef WGGuide < handle
         function FilterData(obj,source)
             T=obj.Data(obj.Data.('Laboratoř')==source,:);
             
-            TF=WGGuide.FoldTable(T,[6,7,8,38],1:39,'none');
+            TF=WGGuide.FoldTable(T,[6,7,8,38],1:41,'none');
             idx=[];
             for i=1:size(TF,1)
                 Tn=TF.FilteredTable{i};

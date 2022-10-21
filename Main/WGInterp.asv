@@ -80,7 +80,6 @@ classdef WGInterp < handle
             obj.IFitT=table(xt,zresult,'VariableNames',{'T','Z'});
 
             obj.ZFitResult=obj.ZFit(obj.TPSet);
-            obj.Parent.ResultField.Value=obj.ZFitResult;
         end
 
         function plotInter(obj)
@@ -135,11 +134,8 @@ classdef WGInterp < handle
                 z=obj.FitT.z{i};
                 T=obj.Data(obj.Data.T==obj.FitT.T(i),:);
                 [xlims,ylims,zlims]=CheckLims(obj,x,y,z,xlims,ylims,zlims);
-                scatter3(ax,T.x,T.y,T.z,60,'marker','o','MarkerFaceColor', ...
-                    obj.FitT.col{i},'MarkerEdgeColor','k');
-                han(end+1)=surf(ax,x,y,z,'FaceAlpha',0.8,'DisplayName', ...
-                    sprintf("R2:%0.2f T:%d",obj.FitT.gof{i}.rsquare,obj.FitT.T(i)), ...
-                    'FaceColor',obj.FitT.col{i});
+                scatter3(ax,T.x,T.y,T.z,60,'marker','o','MarkerFaceColor',obj.FitT.col{i},'MarkerEdgeColor','none');
+                han(end+1)=surf(ax,x,y,z,'FaceAlpha',0.8,'DisplayName',sprintf("R2:%0.2f T:%d",obj.FitT.gof{i}.rsquare,obj.FitT.T(i)),'FaceColor',obj.FitT.col{i});
                 
 
                 
@@ -147,7 +143,7 @@ classdef WGInterp < handle
             xlabel(ax,sprintf("x: %s",obj.xLab));
             ylabel(ax,sprintf("y: %s",obj.yLab));
             zlabel(ax,sprintf("z: %s",obj.zLab));
-            legend(ax,han,'Location','northeast','AutoUpdate','off');
+            legend(ax,han,'Location','northeast');
 
             xlim(ax,xlims);
             ylim(ax,ylims);

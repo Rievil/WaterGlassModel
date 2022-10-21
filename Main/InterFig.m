@@ -17,7 +17,7 @@ classdef InterFig < handle
 
     methods
         function obj=InterFig(~)
-            obj.WGGuide=WGGuide("data pro Vlastika_Šablona_2022-10-07.xlsx");
+            obj.WGGuide=WGGuide("data pro Vlastika_Šablona_2022-10-20.xlsx");
             DrawGUI(obj);
         end
 
@@ -31,7 +31,7 @@ classdef InterFig < handle
 
             g = uigridlayout(fig);
             g.RowHeight = {25,'1x'};
-            g.ColumnWidth = {125,125,'1x'};
+            g.ColumnWidth = {'1x','1x','4x'};
             
             but1=uibutton(g,'Text','New interpretation','ButtonPushedFcn',@obj.MNew);
             but1.Layout.Row=1;
@@ -51,14 +51,32 @@ classdef InterFig < handle
         function SetCurrent(obj,id)
             obj.CurrentTab=id;
         end
+
+        function state=CheckName(obj,name)
+            state=false;
+            for i=1:numel(obj.WGTabList)
+                tab=obj.WGTabList{i};
+                if strcmp(name,tab.Title)
+                    state=true;
+                    break;
+                end
+            end
+        end
     end
 
     methods (Access=private)
         function MNew(obj,src,evnt)
-            obj.ID=obj.ID+1;
+            try
+                obj.ID=obj.ID+1;
+                
+                obj1=WGTab(obj,obj.TabPanel,obj.ID);
+                
+                obj.WGTabList{end+1}=obj1;
+            catch ME
+%                 delete(obj1);
+                obj.ID=obj.ID-1;
+            end
             
-            obj1=WGTab(obj,obj.TabPanel,obj.ID);
-            obj.WGTabList{end+1}=obj1;
         end
 
 

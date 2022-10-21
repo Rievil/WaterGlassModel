@@ -13,7 +13,7 @@ classdef WGTab < handle
         IntType;
         SParam;
         Title;
-        ResultField;
+        
     end
 
     methods
@@ -91,7 +91,9 @@ classdef WGTab < handle
             tx1.Layout.Row=4;
             tx1.Layout.Column=1;
             
-            
+            uib1=uibutton(g2,'Text','Draw','ButtonPushedFcn',@obj.DrawPlot);
+            uib1.Layout.Row=5;
+            uib1.Layout.Column=[1 2];
 
 
 
@@ -101,11 +103,10 @@ classdef WGTab < handle
             uip2.Layout.Column=2;
             
             g3 = uigridlayout(uip2);
-            g3.RowHeight = {'1x',210};
+            g3.RowHeight = {'3x','1x'};
             g3.ColumnWidth = {'1x'};
             uiax=uiaxes(g3);
-            uiax.Toolbar.Visible = 'off';
-            uiax.Interactions = [rotateInteraction];
+            uiax.
             uiax.Layout.Row=1;
             uiax.Layout.Column=1;
             obj.UIAx=uiax;
@@ -116,8 +117,8 @@ classdef WGTab < handle
             uip3.Layout.Column=1;
 
             g4 = uigridlayout(uip3);
-            g4.RowHeight = {25,25,25,25,25,'1x'};
-            g4.ColumnWidth = {70,130,'1x'};
+            g4.RowHeight = {30,30,30,30,'1x'};
+            g4.ColumnWidth = {100,100,'1x'};
 
             uiax2=uiaxes(g4);
             uiax2.Layout.Row=[1,5];
@@ -140,6 +141,10 @@ classdef WGTab < handle
             edf1.Layout.Row=2;
             edf1.Layout.Column=2;
 
+%             uib1=uibutton(g4,'Text','Draw','ButtonPushedFcn',@obj.DrawPlot);
+%             uib1.Layout.Row=3;
+%             uib1.Layout.Column=1;
+
             uib1=uilabel(g4,'Text','T:');
             uib1.Layout.Row=3;
             uib1.Layout.Column=1;
@@ -149,20 +154,14 @@ classdef WGTab < handle
             edf1.Layout.Row=3;
             edf1.Layout.Column=2;
 
-            uib1=uibutton(g4,'Text','Draw','ButtonPushedFcn',@obj.DrawInterpResult);
-            uib1.Layout.Row=4;
-            uib1.Layout.Column=[1 2];
-
             uib1=uilabel(g4,'Text','Result Z:');
-            uib1.Layout.Row=5;
+            uib1.Layout.Row=4;
             uib1.Layout.Column=1;
             obj.PlotPanel=uip3;
 
-            edf2=uieditfield(g4,'numeric','Editable','on');
-            edf2.Layout.Row=5;
-            edf2.Layout.Column=2;
-            obj.ResultField=edf2;
-
+            edf1=uieditfield(g4,'numeric','Editable','on');
+            edf1.Layout.Row=4;
+            edf1.Layout.Column=2;
             
 
             UpdatePlot(obj);
@@ -199,8 +198,6 @@ classdef WGTab < handle
             obj.WGInterp.TPSet=double(src.Value);
         end
 
-
-
         function CIntType(obj,src,evnt)
             obj.IntType=src.Value;
             UpdatePlot(obj);
@@ -211,11 +208,10 @@ classdef WGTab < handle
             UpdatePlot(obj);
         end
 
-        function DrawInterpResult(obj,src,evnt)
+        function DrawPlot(obj,src,evnt)
+            UpdatePlot(obj);
             obj.WGInterp.plotInter;
         end
-
-
 
         function UpdatePlot(obj)
             T=obj.WGGuide.FData(obj.WGGuide.FData.('Systém')==obj.SSystem & obj.WGGuide.FData.('zlabel')==obj.SParam,:);
