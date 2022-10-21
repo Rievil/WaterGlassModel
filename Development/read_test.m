@@ -3,6 +3,10 @@ data=readtable("data pro Vlastika_Šablona_2022-10-07.xlsx",'VariableNamingRule'
 %%
 % obj=WGGuide("data pro Vlastika_Šablona_2022-10-07.xlsx");
 obj=InterFig;
+%%
+x=obj.WGTabList{1, 2}.WGInterp.FitT.xo{4};
+y=obj.WGTabList{1, 2}.WGInterp.FitT.yo{4};
+z=obj.WGTabList{1, 2}.WGInterp.FitT.zo{4};
 %% Filtrovat pouze VUT
 
 T=data(data.('Laboratoř')=="VUT",:);

@@ -14,6 +14,9 @@ classdef WGTab < handle
         SParam;
         Title;
         ResultField;
+        LogX=false;
+        LogY=false;
+        LogZ=false;
     end
 
     methods
@@ -50,7 +53,7 @@ classdef WGTab < handle
             uip1.Layout.Column=1;
             
             g2 = uigridlayout(uip1);
-            g2.RowHeight = {30,30,30,30,30,'1x'};
+            g2.RowHeight = {30,30,30,30,30,30,30,'1x'};
             g2.ColumnWidth = {'1x','1x'};
             
             edf1=uieditfield(g2,'Value',sprintf("%d",obj.ID),'Editable','on','ValueChangedFcn',@obj.CChangeName);
@@ -90,10 +93,17 @@ classdef WGTab < handle
             tx1=uilabel(g2,'Text','InterpretationType:');
             tx1.Layout.Row=4;
             tx1.Layout.Column=1;
-            
-            
 
-
+%             tx1=uilabel(g2,'Text','Logarytmic X:');
+%             tx1.Layout.Row=5;
+%             tx1.Layout.Column=1;
+            axc=["x","y","z"];
+            for i=3
+                cbx = uicheckbox(g2, 'Text',sprintf('Logarytmic %s',axc(i)),...
+                      'Value', 0,'UserData',axc(i),'ValueChangedFcn',@obj.CSetLog);
+                cbx.Layout.Row=5;
+                cbx.Layout.Column=[1 2];
+            end
 
             %%
             uip2=uipanel(g1,'Title','Plot');
@@ -167,6 +177,18 @@ classdef WGTab < handle
 
             UpdatePlot(obj);
         end
+
+        function CSetLog(obj,src,evnt)
+            switch src.UserData
+                case 'x'
+                    obj.LogX=src.Value;
+                case 'y'
+                    obj.LogY=src.Value;
+                case 'z'
+                    obj.LogZ=src.Value;
+            end
+            UpdatePlot(obj);
+        end
         
         function CChangeName(obj,src,evnt)
             newname=src.Value;
@@ -188,11 +210,31 @@ classdef WGTab < handle
         end
 
         function CXPSet(obj,src,evnt)
-            obj.WGInterp.XPSet=double(src.Value);
+            lims=obj.WGInterp.Lims;
+            val=src.Value;
+            if val>=lims.x(1) && val<=lims.x(2)
+                obj.WGInterp.XPSet=double(src.Value);
+            else
+                fig=obj.Parent.UIFig;
+                message = {'X value out of limits',char(sprintf("Value must be from %0.2f to %0.2f",lims.x(1),lims.x(2)))};
+                uialert(fig,message,'Warning',...
+                'Icon','warning');
+                src.Value=obj.WGInterp.XPSet;
+            end
         end
 
         function CYPSet(obj,src,evnt)
-            obj.WGInterp.YPSet=double(src.Value);
+            lims=obj.WGInterp.Lims;
+            val=src.Value;
+            if val>=lims.y(1) && val<=lims.y(2)
+                obj.WGInterp.YPSet=double(src.Value);
+            else
+                fig=obj.Parent.UIFig;
+                message = {'Y value out of limits',char(sprintf("Value must be from %0.2f to %0.2f",lims.y(1),lims.y(2)))};
+                uialert(fig,message,'Warning',...
+                'Icon','warning');
+                src.Value=obj.WGInterp.YPSet;
+            end
         end
 
         function CTPSet(obj,src,evnt)
@@ -212,7 +254,10 @@ classdef WGTab < handle
         end
 
         function DrawInterpResult(obj,src,evnt)
+            
             obj.WGInterp.plotInter;
+
+
         end
 
 
@@ -244,6 +289,13 @@ classdef WGTab < handle
                 Ti.Properties.VariableNames={'ID','Legend','x','y','z','std','T','Ignore'};
                 xname=string(T.FilteredTable{1}.(xla)(1));
                 yname=string(T.FilteredTable{1}.(yla)(1));
+
+
+                if obj.LogZ
+                    Ti.z=log(Ti.z);
+                end
+
+
                 zname=string(T.FilteredTable{1}.(zla)(1));
                 obj.WGInterp.SetData(Ti,xname,yname,zname,'T'); 
                 plot(obj.WGInterp);

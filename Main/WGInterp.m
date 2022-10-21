@@ -9,7 +9,7 @@ classdef WGInterp < handle
         Parent;
         xLog=false;
         yLog=false;
-        zLog=true;
+        zLog=false;
         XPSet=0;
         YPSet=0;
         TPSet=0;
@@ -19,6 +19,7 @@ classdef WGInterp < handle
         ZFitResult=0;
         Lims;
         TarHandle;
+        Boundary;
     end
 
     methods
@@ -29,6 +30,7 @@ classdef WGInterp < handle
 
         function SetData(obj,data,xlab,ylab,zlab,tcol)
             obj.Data=data;
+            obj.Data=rmmissing(obj.Data);
             obj.xLab=xlab;
             obj.yLab=ylab;
             obj.zLab=zlab;
@@ -36,28 +38,59 @@ classdef WGInterp < handle
             Fit(obj);
         end
 
+        function GetBoundary(obj)
+
+%             figure;
+%             hold on;
+            Ti=unique(obj.Data(:,["x","y"]),'rows');
+%             Ti=rmmissing(Ti);
+
+            x=Ti.x;
+            y=Ti.y;
+%             scatter(x,y);
+            k = boundary(x,y);
+%             hold on;
+%             plot(x(k),y(k));
+            obj.Boundary=[x(k),y(k)];
+        end
+
         
 
         function Fit(obj)
+%             GetBoundary(obj);
             unqt=unique(obj.Data.T);
             col=lines(numel(unqt));
             obj.FitT=table;
             for i=1:numel(unqt)
-                Tmi=obj.Data(obj.Data.T==unqt(i),:);
+                Tmi=unique(obj.Data(obj.Data.T==unqt(i),:),'rows');
+%                 Tmi=rmmissing(Tmi);
                 [fitresult,gof]=WGInterp.FitProcessedData2(Tmi.x,Tmi.y,Tmi.z);
                 
                 x1=Tmi.x;
                 y1=Tmi.y;
                 z1=Tmi.z;
             
-                lx=linspace(min(x1),max(x1),10);
-                ly=linspace(min(y1),max(y1),10);
+                lx=linspace(min(x1),max(x1),100);
+                ly=linspace(min(y1),max(y1),100);
 
+
+                
                 [xx,yy] = meshgrid(lx,ly);
                 zz=fitresult(xx,yy);
-                obj.FitT=[obj.FitT; table({xx},{yy},{zz},{fitresult},{gof},unqt(i),{col(i,:)},'VariableNames',...
-                    {'x','y','z','fit','gof','T','col'})];
+                z2=fitresult(x1,y1);
+
+%                 xx=x1;
+%                 yy=y1;
+%                 zz=z1;
+
+                zz=fitresult(xx,yy);
+                z2=fitresult(x1,y1);
+                
+
+                obj.FitT=[obj.FitT; table({x1},{y1},{z2},{xx},{yy},{zz},{fitresult},{gof},unqt(i),{col(i,:)},'VariableNames',...
+                    {'xo','yo','zo','x','y','z','fit','gof','T','col'})];
             end
+            
         end
         
         function SetFitParams(obj,x,y,t)
@@ -94,10 +127,13 @@ classdef WGInterp < handle
             xnew=linspace(obj.IFitT.T(1),obj.IFitT.T(end),100)';
             ynew=obj.ZFit(xnew);
             plot(ax,xnew,ynew,'-r');
-            scatter(ax,obj.TPSet,obj.ZFitResult,60,'+k');
+            han=scatter(ax,obj.TPSet,obj.ZFitResult,300,'+k', ...
+                'DisplayName',sprintf("R^2=%0.3f",obj.ZFitGof.rsquare),...
+                'LineWidth',4);
             ShowPoint(obj);
             xlim(ax,[min(xnew),max(xnew)]);
             ylim(ax,[min(obj.IFitT.Z)*0.9,max(obj.IFitT.Z)*1.1]);
+            legend(ax,han);
         end
 
         function plot(obj)
@@ -137,6 +173,17 @@ classdef WGInterp < handle
                 [xlims,ylims,zlims]=CheckLims(obj,x,y,z,xlims,ylims,zlims);
                 scatter3(ax,T.x,T.y,T.z,60,'marker','o','MarkerFaceColor', ...
                     obj.FitT.col{i},'MarkerEdgeColor','k');
+
+%                 xi=obj.FitT.xo{i};
+%                 yi=obj.FitT.yo{i};
+%                 zi=obj.FitT.zo{i};
+
+%                 tri=delaunay(xi,yi);
+                
+%                 han(end+1)=trisurf(tri,xi,yi,zi,'FaceAlpha',0.8,'DisplayName', ...
+%                     sprintf("R2:%0.2f T:%d",obj.FitT.gof{i}.rsquare,obj.FitT.T(i)), ...
+%                     'FaceColor',obj.FitT.col{i},'Parent',ax);
+
                 han(end+1)=surf(ax,x,y,z,'FaceAlpha',0.8,'DisplayName', ...
                     sprintf("R2:%0.2f T:%d",obj.FitT.gof{i}.rsquare,obj.FitT.T(i)), ...
                     'FaceColor',obj.FitT.col{i});
@@ -215,8 +262,9 @@ classdef WGInterp < handle
             [xData, yData, zData] = prepareSurfaceData( x, y, z );
             
             % Set up fittype and options.
-            ft = 'thinplateinterp';
-            [fitresult, gof] = fit( [xData, yData], zData, ft, 'Normalize', 'on' );
+%             ft = 'thinplateinterp';
+            ft=fittype('poly44');
+            [fitresult, gof] = fit( [xData, yData], zData, ft, 'Normalize', 'off' );
         end
     end
 end
