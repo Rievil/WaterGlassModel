@@ -127,7 +127,7 @@ classdef WGTab < handle
 
             g4 = uigridlayout(uip3);
             g4.RowHeight = {25,25,25,25,25,'1x'};
-            g4.ColumnWidth = {70,130,'1x'};
+            g4.ColumnWidth = {'1x',60,'4x'};
 
             uiax2=uiaxes(g4);
             uiax2.Layout.Row=[1,5];
@@ -163,7 +163,7 @@ classdef WGTab < handle
             uib1.Layout.Row=4;
             uib1.Layout.Column=[1 2];
 
-            uib1=uilabel(g4,'Text','Result Z:');
+            uib1=uilabel(g4,'Text','Result Z (always linear):');
             uib1.Layout.Row=5;
             uib1.Layout.Column=1;
             obj.PlotPanel=uip3;
@@ -263,6 +263,8 @@ classdef WGTab < handle
 
 
         function UpdatePlot(obj)
+            d = uiprogressdlg(obj.Parent.UIFig,'Title','Computing Interpolation',...
+        'Indeterminate','on');
             T=obj.WGGuide.FData(obj.WGGuide.FData.('Systém')==obj.SSystem & obj.WGGuide.FData.('zlabel')==obj.SParam,:);
             if obj.IntType==1
                 xl="x";
@@ -302,6 +304,7 @@ classdef WGTab < handle
            else
 
            end
+           close(d);
         end
 
         function ClearCont(obj,container)

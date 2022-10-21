@@ -214,11 +214,27 @@ classdef WGTab < handle
             val=src.Value;
             if val>=lims.x(1) && val<=lims.x(2)
                 obj.WGInterp.XPSet=double(src.Value);
+            else
+                fig=obj.Parent.UIFig;
+                message = {'X value out of limits',char(sprintf("Value must be from %0.2f to %0.2f",lims.x(1),lims.x(2)))};
+                uialert(fig,message,'Warning',...
+                'Icon','warning');
+                src.Value=obj.WGInterp.XPSet;
             end
         end
 
         function CYPSet(obj,src,evnt)
-            obj.WGInterp.YPSet=double(src.Value);
+            lims=obj.WGInterp.Lims;
+            val=src.Value;
+            if val>=lims.y(1) && val<=lims.y(2)
+                obj.WGInterp.YPSet=double(src.Value);
+            else
+                fig=obj.Parent.UIFig;
+                message = {'Y value out of limits',char(sprintf("Value must be from %0.2f to %0.2f",lims.y(1),lims.y(2)))};
+                uialert(fig,message,'Warning',...
+                'Icon','warning');
+                src.Value=obj.WGInterp.YPSet;
+            end
         end
 
         function CTPSet(obj,src,evnt)
@@ -247,6 +263,8 @@ classdef WGTab < handle
 
 
         function UpdatePlot(obj)
+            d = uiprogressdlg(fig,'Title','Computing SVD',...
+        'Indeterminate','on');
             T=obj.WGGuide.FData(obj.WGGuide.FData.('Systém')==obj.SSystem & obj.WGGuide.FData.('zlabel')==obj.SParam,:);
             if obj.IntType==1
                 xl="x";
@@ -286,6 +304,7 @@ classdef WGTab < handle
            else
 
            end
+           close(d);
         end
 
         function ClearCont(obj,container)

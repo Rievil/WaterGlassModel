@@ -113,7 +113,11 @@ classdef WGInterp < handle
             obj.IFitT=table(xt,zresult,'VariableNames',{'T','Z'});
 
             obj.ZFitResult=obj.ZFit(obj.TPSet);
-            obj.Parent.ResultField.Value=obj.ZFitResult;
+            if obj.Parent.LogZ
+                obj.Parent.ResultField.Value=power(10,obj.ZFitResult);
+            else
+                obj.Parent.ResultField.Value=obj.ZFitResult;
+            end
         end
 
         function plotInter(obj)
@@ -155,10 +159,11 @@ classdef WGInterp < handle
                 set(ax,'YScale','lin');
             end
 
-            if obj.zLog
-                set(ax,'ZScale','log');
+            if obj.Parent.LogZ
+%                 xti=get(ax,'XTicks');
+%                 ax.XTicks=10^ax.XTicks;
             else
-                set(ax,'ZScale','lin');
+
             end
 
             han=[];
