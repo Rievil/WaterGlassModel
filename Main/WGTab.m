@@ -294,7 +294,7 @@ classdef WGTab < handle
 
 
                 if obj.LogZ
-                    Ti.z=log(Ti.z);
+                    Ti.z=log10(Ti.z);
                 end
 
 

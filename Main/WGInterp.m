@@ -179,16 +179,6 @@ classdef WGInterp < handle
                 scatter3(ax,T.x,T.y,T.z,60,'marker','o','MarkerFaceColor', ...
                     obj.FitT.col{i},'MarkerEdgeColor','k');
 
-%                 xi=obj.FitT.xo{i};
-%                 yi=obj.FitT.yo{i};
-%                 zi=obj.FitT.zo{i};
-
-%                 tri=delaunay(xi,yi);
-                
-%                 han(end+1)=trisurf(tri,xi,yi,zi,'FaceAlpha',0.8,'DisplayName', ...
-%                     sprintf("R2:%0.2f T:%d",obj.FitT.gof{i}.rsquare,obj.FitT.T(i)), ...
-%                     'FaceColor',obj.FitT.col{i},'Parent',ax);
-
                 han(end+1)=surf(ax,x,y,z,'FaceAlpha',0.8,'DisplayName', ...
                     sprintf("R2:%0.2f T:%d",obj.FitT.gof{i}.rsquare,obj.FitT.T(i)), ...
                     'FaceColor',obj.FitT.col{i});

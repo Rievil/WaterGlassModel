@@ -4,6 +4,10 @@ data=readtable("data pro Vlastika_Šablona_2022-10-07.xlsx",'VariableNamingRule'
 % obj=WGGuide("data pro Vlastika_Šablona_2022-10-07.xlsx");
 obj=InterFig;
 %%
+
+a=log10(1024)
+b=power(10,a)
+%%
 x=obj.WGTabList{1, 2}.WGInterp.FitT.xo{4};
 y=obj.WGTabList{1, 2}.WGInterp.FitT.yo{4};
 z=obj.WGTabList{1, 2}.WGInterp.FitT.zo{4};
