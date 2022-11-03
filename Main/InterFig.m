@@ -107,6 +107,11 @@ classdef InterFig < handle
                 wg=obj.WGTabList{i};
                 T=[T; Export(wg,i+1)];
             end
+
+            if exist("Interpol.xlsx")
+                delete('Interpol.xlsx')
+            end
+            
             writetable(T,'Interpol.xlsx');
         end
 
