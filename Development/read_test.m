@@ -124,3 +124,31 @@ for i=1:size(TFi,1)
 end
 set(gca,'ZScale','log');
 %%
+figure;
+hold on;
+
+x=[1,2,3,4,5,6,7]';
+y=[1,5,10,11,11.5,12,12.5]';
+scatter(x,y);
+
+[pl,gof]=fit(x,y,'poly3','normalize','off');
+xnew=linspace(min(x),max(x),100)';
+ynew=pl(xnew);
+
+
+eq=char(formula(pl));
+coefval=coeffvalues(pl);
+coefnam=coeffnames(pl);
+for j=1:size(coefnam)
+    eq=replace(eq,coefnam{j},num2str(coefval(j)));
+end
+
+plot(xnew,ynew,'-r','DisplayName',eq);
+legend;
+%%
+yint=pl(x)
+%%
+a={'1','2','=sum(a1,b1)'};
+a(2,:)={'4' '5' '=sum(a2,b2)'};
+a(3,:)={4, 5 ,'=sum(a3,b3)'};
+xlswrite('Book2.xls',a);

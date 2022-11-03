@@ -2,6 +2,7 @@ classdef InterFig < handle
     properties
         WGGuide;
         UIFig;
+        Toolbar;
         Panel;
         TabPanel;
         WGTabList;
@@ -28,22 +29,39 @@ classdef InterFig < handle
         function DrawGUI(obj)
             fig=uifigure;
             obj.UIFig=fig;
+            
+
+            obj.Toolbar = uitoolbar(obj.UIFig);
+
+            % New inter
+            ptool1 = uipushtool(obj.Toolbar,'ClickedCallback',@obj.MNew,...
+                'Tooltip','New interpretation','Icon','plus_sign.gif');
+
+            % Close
+            ptool2 = uipushtool(obj.Toolbar,'ClickedCallback',@obj.MClose,...
+                'Tooltip','Close interpretation','Icon','cancel_sign.gif');
+
+            % Export
+            ptool3 = uipushtool(obj.Toolbar,'ClickedCallback',@obj.MExport,...
+                'Tooltip','Export all interpretation','Icon','export_icon.gif');
+
+
 
             g = uigridlayout(fig);
             g.RowHeight = {25,'1x'};
             g.ColumnWidth = {'1x','1x','4x'};
             
-            but1=uibutton(g,'Text','New interpretation','ButtonPushedFcn',@obj.MNew);
-            but1.Layout.Row=1;
-            but1.Layout.Column=1;
-
-            but2=uibutton(g,'Text','Close interpretation','ButtonPushedFcn',@obj.MClose);
-            but2.Layout.Row=1;
-            but2.Layout.Column=2;
+%             but1=uibutton(g,'Text','New interpretation','ButtonPushedFcn',@obj.MNew);
+%             but1.Layout.Row=1;
+%             but1.Layout.Column=1;
+% 
+%             but2=uibutton(g,'Text','Close interpretation','ButtonPushedFcn',@obj.MClose);
+%             but2.Layout.Row=1;
+%             but2.Layout.Column=2;
 
 
             tabgp = uitabgroup(g);
-            tabgp.Layout.Row=2;
+            tabgp.Layout.Row=[1 2];
             tabgp.Layout.Column=[1 3];
             obj.TabPanel=tabgp;
         end
@@ -77,6 +95,19 @@ classdef InterFig < handle
                 obj.ID=obj.ID-1;
             end
             
+        end
+
+        function MExport(obj,src,evnt)
+            ExportModels(obj);
+        end
+
+        function ExportModels(obj)
+            T=table;
+            for i=1:obj.Count
+                wg=obj.WGTabList{i};
+                T=[T; Export(wg,i+1)];
+            end
+            writetable(T,'Interpol.xlsx');
         end
 
 

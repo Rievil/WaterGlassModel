@@ -34,6 +34,11 @@ classdef WGTab < handle
             DrawGUI(obj);
         end
 
+        function TR=Export(obj,row)
+            obj.WGInterp.GetEquations(row);
+            TR=obj.WGInterp.ExportTable;
+        end
+
         function delete(obj)
 %             ClearCont(obj,obj.Tab);
             obj.Tab.delete;
@@ -53,7 +58,7 @@ classdef WGTab < handle
             uip1.Layout.Column=1;
             
             g2 = uigridlayout(uip1);
-            g2.RowHeight = {30,30,30,30,30,30,30,'1x'};
+            g2.RowHeight = {30,30,30,30,30,30,30,30,30,30,30,'1x'};
             g2.ColumnWidth = {'1x','1x'};
             
             edf1=uieditfield(g2,'Value',sprintf("%d",obj.ID),'Editable','on','ValueChangedFcn',@obj.CChangeName);
@@ -104,6 +109,19 @@ classdef WGTab < handle
                 cbx.Layout.Row=5;
                 cbx.Layout.Column=[1 2];
             end
+
+%             tx1=uilabel(g2,'Text','Equation 15°C:');
+%             tx1.Layout.Row=6;
+%             tx1.Layout.Column=1;
+% 
+%             edf2=uieditfield(g2,'Value',sprintf("%d",obj.ID),'Editable','on');
+%             edf2.Layout.Row=1;
+%             edf2.Layout.Column=2;
+% 
+%             tx1=uibutton(g2,'Text','Copy equation to clipboard','ButtonPushedFcn',@obj.CCopyEquations);
+%             tx1.Layout.Row=7;
+%             tx1.Layout.Column=[1 2];
+          
 
             %%
             uip2=uipanel(g1,'Title','Plot');
@@ -189,6 +207,13 @@ classdef WGTab < handle
             end
             UpdatePlot(obj);
         end
+
+        function CCopyEquations(obj,src,evnt)
+            eq=obj.WGInterp.GetEquations(2);
+            clipboard('copy',eq);
+        end
+
+
         
         function CChangeName(obj,src,evnt)
             newname=src.Value;

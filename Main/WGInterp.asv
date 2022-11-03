@@ -20,6 +20,7 @@ classdef WGInterp < handle
         Lims;
         TarHandle;
         Boundary;
+        ExportTable;
     end
 
     methods
@@ -120,6 +121,54 @@ classdef WGInterp < handle
             end
         end
 
+        function eqfin=GetEquations(obj,row)
+            eqfin=[];
+            alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            inttype=["x","x2","x3","x4","proc"];
+            Tout=table(string(obj.Parent.Title),obj.xLab,obj.yLab,obj.zLab,obj.Parent.IntType,obj.Parent.LogZ,obj.XPSet,obj.YPSet, ...
+                'VariableNames',{'Name','XLab','YLab','ZLab','IntType','Log','X','Y'});
+            
+            cx=[alphabet(size(Tout,2)-1),char(num2str(row))];
+            cy=[alphabet(size(Tout,2)),char(num2str(row))];
+
+            for i=1:size(obj.FitT,1)
+                pl=obj.FitT.fit{i};
+                eq=WGInterp.RepEq(pl,cx,cy);
+
+                if ~obj.Parent.LogZ
+                    Tout=[Tout, table(sprintf("=%s",replace(eq,'.',',')),'VariableNames',{char(sprintf("z%d",obj.FitT.T(i)))})];
+                else
+                    Tout=[Tout, table(sprintf("=power(10;%s)",replace(eq,'.',',')),'VariableNames',{char(sprintf("z%d",obj.FitT.T(i)))})];
+                end
+
+                eq=char(sprintf("T%d: %s",obj.FitT.T(i),eq));
+
+                if i>1
+                    eqfin=[eqfin,';',eq];
+                else
+                    eqfin=eq;
+                end
+            end
+
+%             Tout=[Tout, table(obj.TPSet,'VariableName',{'T'})];
+%             eq=WGInterp.RepEq(obj.ZFit,[alphabet(size(Tout,2)),char(num2str(row))]);
+% 
+%             if ~obj.Parent.LogZ
+%                 Tout=[Tout,table(sprintf("=%s",replace(eq,'.',',')),'VariableName',{'zt_inter'})];
+%             else
+%                 Tout=[Tout,table(sprintf("=power(10;%s)",replace(eq,'.',',')),'VariableName',{'zt_inter'})];
+%             end
+
+
+%             writetable(Tout,'Interpol.xlsx');
+            obj.ExportTable=Tout;
+            eqfin=char(replace(eqfin,'.',','));
+        end
+
+
+
+        
+
         function plotInter(obj)
             GetFitResult(obj);
             ax=obj.Parent.UIAxInt;
@@ -160,8 +209,10 @@ classdef WGInterp < handle
             end
 
             if obj.Parent.LogZ
-                
+%                 xti=get(ax,'XTicks');
+%                 ax.XTicks=10^ax.XTicks;
             else
+
             end
 
             han=[];
@@ -176,16 +227,6 @@ classdef WGInterp < handle
                 [xlims,ylims,zlims]=CheckLims(obj,x,y,z,xlims,ylims,zlims);
                 scatter3(ax,T.x,T.y,T.z,60,'marker','o','MarkerFaceColor', ...
                     obj.FitT.col{i},'MarkerEdgeColor','k');
-
-%                 xi=obj.FitT.xo{i};
-%                 yi=obj.FitT.yo{i};
-%                 zi=obj.FitT.zo{i};
-
-%                 tri=delaunay(xi,yi);
-                
-%                 han(end+1)=trisurf(tri,xi,yi,zi,'FaceAlpha',0.8,'DisplayName', ...
-%                     sprintf("R2:%0.2f T:%d",obj.FitT.gof{i}.rsquare,obj.FitT.T(i)), ...
-%                     'FaceColor',obj.FitT.col{i},'Parent',ax);
 
                 han(end+1)=surf(ax,x,y,z,'FaceAlpha',0.8,'DisplayName', ...
                     sprintf("R2:%0.2f T:%d",obj.FitT.gof{i}.rsquare,obj.FitT.T(i)), ...
@@ -268,6 +309,28 @@ classdef WGInterp < handle
 %             ft = 'thinplateinterp';
             ft=fittype('poly44');
             [fitresult, gof] = fit( [xData, yData], zData, ft, 'Normalize', 'off' );
+        end
+
+        function eq=RepEq(fit,cx,cy)
+            switch class(fit)
+                case 'sfit'
+                    eq=char(formula(fit));
+                    coefval=coeffvalues(fit);
+                    coefnam=coeffnames(fit);
+                    for j=1:size(coefnam)
+                        eq=replace(eq,coefnam{j},num2str(coefval(j)));
+                    end
+                    eq=replace(eq,'x',cx);
+                    eq=replace(eq,'y',cy);
+                case 'cfit'
+                    eq=char(formula(fit));
+                    coefval=coeffvalues(fit);
+                    coefnam=coeffnames(fit);
+                    for j=1:size(coefnam)
+                        eq=replace(eq,coefnam{j},num2str(coefval(j)));
+                    end
+                    eq=replace(eq,'x',cx);
+            end
         end
     end
 end

@@ -32,6 +32,8 @@ classdef WGGuide < handle
         end
 
 
+
+
         function FilterData(obj,source)
             T=obj.Data(obj.Data.('Laboratoř')==source,:);
             
