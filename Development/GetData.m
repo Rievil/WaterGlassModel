@@ -2,8 +2,12 @@ function TFF=GetData(filename)
     T=readtable(filename);
     
     names=T.Properties.VariableNames;
-    for i=[6,7,8,13,14,15,20,21,22,27,28,29,31,32]
+    for i=[6,7,8,13,14,15,20,21,22,27,28,29,36,38]
         T.(names{i})=string(T.(names{i}));
+    end
+    
+    for i=[31,32]
+        T.(names{i})=double(T.(names{i}));
     end
     
     
@@ -41,7 +45,7 @@ function TFF=GetData(filename)
         end
     end
     
-    TF1=FoldTable(TF,[1,3,5,8,10],[2,4,6,7],'none');
+    TF1=FoldTable(TF,[1,3,5,8,10],[2,4,6,7,10],'none');
     
     xtype=unique(TF1.xlabidx);
     ytype=unique(TF1.ylabidx);
