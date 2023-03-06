@@ -1,9 +1,8 @@
-TFF=GetData([cd '\Development\Vlastik_All Data.xlsx']);
+T=GetData([cd '\Development\Vlastik_All Data.xlsx']);
 %%
-figure;
-hold on;
-Ti=T(T.xlabel=="Na+(mol/l)" & T.zlabel=="Density",:);
 
+Ti=T(T.xlabidx=="Na+ (mol/kg)" & T.zlabidx=="Viscosity",:);
+%%
 Ti=Ti(:,[1,2,3,4,5,6,7,8,30]);
 Ti=rmmissing(Ti);
 x=Ti.x;
@@ -18,6 +17,8 @@ c=Ti.Teplota;
 Tc=table(x,y,z,s,c,'VariableNames',{'X','Y','Z','Std','Temp'});
 unqt=unique(Tc.Temp);
 clrs=colormap(parula(numel(unqt)));
+figure;
+hold on;
 for i=1:numel(unqt)
     Tci=Tc(Tc.Temp==unqt(i),:);
 
